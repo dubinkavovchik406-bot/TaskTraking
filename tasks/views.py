@@ -94,3 +94,15 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
             return redirect('tasks:task-detail', pk=comment.task.pk)
         else:
             pass
+
+# Сторінка для створення таску
+class TaskCreationView(LoginRequiredMixin, CreateView):
+    model = models.Task
+    template_name = "tasks/task-form.html"
+    form_class = TaskForm
+    success_url = reverse_lazy("tasks:tasks-list")
+
+    # Чи валідна форма таску
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
