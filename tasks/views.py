@@ -119,3 +119,17 @@ class TaskCompleteView(LoginRequiredMixin, UserIsOwnerMixin, View):
     def get_object(self):
         task_id = self.kwargs.get("pk")
         return get_object_or_404(models.Task, pk=task_id)
+
+# Сторінка для зміни інформації про таску
+class TaskUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+    model = models.Task
+    form_class = TaskForm
+    template_name = "tasks/task-update-form.html"
+    success_url = reverse_lazy("tasks:tasks-list")
+
+# Сторінка для видалення таску
+class TaskDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
+    model = models.Task
+    success_url = reverse_lazy("tasks:tasks-list")
+    template_name = "tasks/task-delete-confirmation.html"
+
