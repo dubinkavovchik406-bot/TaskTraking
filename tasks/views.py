@@ -106,3 +106,16 @@ class TaskCreationView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.creator = self.request.user
         return super().form_valid(form)
+
+# Сторінка для зміни статусу таску на done одним нажатием
+class TaskCompleteView(LoginRequiredMixin, UserIsOwnerMixin, View):
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        task.status = "done"
+        task.save()
+        return HttpResponseRedirect(reverse_lazy("tasks:tasks-list"))
+
+    # Отримання поточного таску
+    def get_object(self):
+        task_id = self.kwargs.get("pk")
+        return get_object_or_404(models.Task, pk=task_id)
