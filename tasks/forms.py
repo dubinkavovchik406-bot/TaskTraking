@@ -31,3 +31,11 @@ class TaskFilterForm(forms.Form):
                                  widget=forms.Select(attrs={'class': 'form-select form-select-sm'}))
     due_date_period = forms.ChoiceField(choices=DUE_DATE_CHOICES, required=False, label="Термін",
                                widget=forms.Select(attrs={'class': 'form-select form-select-sm'}))
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content', 'media']
+        widgets = {
+            "media": forms.FileInput()
+        }
