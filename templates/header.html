@@ -1,0 +1,52 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container">
+
+        {# Логотип / Назва #}
+        <a class="navbar-brand text-dark fw-bold" href="{% url 'tasks:tasks-list' %}">
+             TaskTracking
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav me-auto">
+            </ul>
+
+            {# Статус Користувача #}
+            <ul class="navbar-nav ms-auto d-flex align-items-center">
+
+                {% if user.is_authenticated %}
+
+                    {# Привітання #}
+                    <li class="nav-item me-2 d-flex align-items-center">
+                        <span class="text-muted small me-1">Привіт,</span>
+                        <strong class="app-accent-text">{{ user.username }}</strong>
+                    </li>
+
+                    {# Кнопка Вихід #}
+                    <li class="nav-item">
+                        <form action="{% url 'tasks:logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
+                        </form>
+                    </li>
+
+                {% else %}
+                    {# Кнопка Вхід #}
+                    <li class="nav-item me-2 nav-item d-flex gap-2">
+                        <a class="btn btn-sm btn-primary" href="{% url 'tasks:login' %}">Увійти</a>
+                    </li>
+
+                    {# Кнопка Зареєструватися #}
+                    <li class="nav-item d-flex gap-2">
+                        <a class="btn btn-sm btn-primary" href="{% url 'tasks:register' %}">Зарееструватись</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Видалити коментар
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="card shadow-sm mb-5 border-danger border-2">
+
+            <div class="card-header bg-danger py-3">
+                <h3 class="mb-0" style="color: #FFFFFF;">Підтвердження видалення</h3>
+            </div>
+
+            <div class="card-body p-4 text-center">
+
+                <p class="lead text-danger">Ви впевнені, що хочете видалити цей коментар?</p>
+                <p class="text-muted small">Цю дію неможливо буде скасувати. Коментар належить до завдання "{{ object.task.title }}".</p>
+
+                <form method="post" class="mt-4 d-flex justify-content-center gap-3">
+                   {% csrf_token %}
+
+                   {# Кнопка Видалити комент #}
+                   <button type="submit" class="btn btn-danger">Так, видалити коментар</button>
+
+                   {# Кнопка Відміна: повернення на попередню сторінку (деталі завдання) #}
+                   <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-outline-secondary">Скасувати</a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
