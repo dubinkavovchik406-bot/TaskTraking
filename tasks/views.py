@@ -162,3 +162,24 @@ class CommentLikeToggle(LoginRequiredMixin, View):
             models.Like.objects.create(comment=comment, user=request.user)
         return HttpResponseRedirect(comment.get_absolute_url())
 
+
+# Сторінка для login користувача
+class CustomLoginView(LoginView):
+    template_name = "tasks/login.html"
+    redirect_authenticated_user = True
+
+# Сторінка для того, щоб користувач міг logout
+class CustomLogoutView(LogoutView):
+    next_page = "tasks:login"
+
+# Сторінка для створення акаунта для користувача
+class RegisterView(CreateView):
+    template_name = "tasks/register.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy("tasks:login")
+
+    # Чи валідна форма акаунту
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect(reverse_lazy("tasks:login"))
