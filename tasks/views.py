@@ -70,3 +70,27 @@ class TaskListView(ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = TaskFilterForm(self.request.GET)
         return context
+
+# Сторінка з деталями таска
+class TaskDetailView(LoginRequiredMixin, DetailView):
+    model = models.Task
+    context_object_name = "task"
+    template_name = "tasks/task-detail.html"
+
+    # Збереження параметрів фільтру у контекст для використання у шаблоні
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
+
+    # Для обробки post запиту на створення комменту й медиа файлу(у наступному ще й лайку)
+    def post(self, request, *args, **kwargs):
+        comment_form = CommentForm(request.POST, request.FILES)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.author = request.user
+            comment.task = self.get_object()
+            comment.save()
+            return redirect('tasks:task-detail', pk=comment.task.pk)
+        else:
+            pass
