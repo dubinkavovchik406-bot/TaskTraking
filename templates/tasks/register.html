@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Реєстрація
+{% endblock %}
+
+{% block content %}
+{% load custom_tags %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="card shadow-sm mb-5">
+            <div class="card-header card-header-accent py-3">
+                <h3 class="mb-0 text-center" style="color: #FFFFFF;">Створення облікового запису</h3>
+                <p class="mb-0 text-center small" style="color: rgba(255, 255, 255, 0.8);">Почніть керувати своїми задачами зараз</p>
+            </div>
+            <div class="card-body p-4">
+
+                <form method="post">
+                   {% csrf_token %}
+
+                   {% for field in form %}
+                   <div class="mb-3">
+                       <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                       {{ field | add_class:"form-control" }}
+                       {% for error in field.errors %}
+                           <div class="text-danger small">{{ error }}</div>
+                       {% endfor %}
+                   </div>
+                   {% endfor %}
+
+                   <button type="submit" class="btn btn-success w-100 mt-3">Зареєструватися</button>
+                </form>
+
+                <p class="mt-4 text-center small">
+                    Вже маєте обліковий запис? <a href="{% url 'tasks:login' %}" class="text-primary">Увійти</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

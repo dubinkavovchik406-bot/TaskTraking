@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список усіх задач
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Мої Задачі</h1>
+
+{# Форма фільтрації та кнопка створення #}
+<div class="row mb-4 align-items-end">
+
+    <div class="col-md-8">
+
+        <form method="get" class="row g-3 align-items-end">
+
+            {# Статус #}
+            <div class="col-md-3">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+            </div>
+
+            {# Пріоритет #}
+            <div class="col-md-3">
+                {{ form.priority.label_tag }}
+                {{ form.priority }}
+            </div>
+
+            {# Термін (Період) #}
+            <div class="col-md-3">
+                {{ form.due_date_period.label_tag }}
+                {{ form.due_date_period }}
+            </div>
+
+            {# Кнопки Дій #}
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">Фільтрувати</button>
+                <a href="{% url 'tasks:tasks-list' %}" class="btn btn-outline-secondary btn-sm">Скинути</a>
+            </div>
+        </form>
+    </div>
+
+    {# Колонка для Кнопки Створення #}
+    <div class="col-md-4 text-end">
+        <div class="h-100 d-flex justify-content-end align-items-end">
+            <a href="{% url 'tasks:task-create' %}" class="btn btn-success">
+                + Створити нову задачу
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+{# Cписок задач у вигляді карток #}
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-lg-6 mb-4">
+
+        {# Контейнер картки #}
+        <div class="card shadow-sm h-100
+            {% if task.priority == 'high' and task.status != 'done' %}border-start border-danger border-5{% elif task.status == 'done' %}border-start border-success border-5{% endif %}">
+            <div class="card-body">
+
+                {# заголовок та деталі #}
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">
+                        <a href="{% url 'tasks:task-detail' task.pk %}" class="text-decoration-none">
+                            {{ task.title }}
+                        </a>
+                    </h5>
+
+                    {# Приорітети #}
+                    <span class="badge rounded-pill
+                        {% if task.priority == 'high' %}text-bg-danger{% elif task.priority == 'medium' %}text-bg-warning{% else %}text-bg-secondary{% endif %}">
+                        {{ task.get_priority_display }}
+                    </span>
+                </div>
+
+                <p class="card-text text-muted small mb-3">
+                    {% if task.due_date %}Дедлайн: {{ task.due_date|date:"d M Y" }} | {% endif %} Створено: {{ task.creator.username }}
+                </p>
+
+                {# Статус та дії #}
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+
+                    {# Статус #}
+                    <span class="badge
+                        {% if task.status == 'done' %}text-bg-success{% elif task.status == 'in_progress' %}text-bg-info{% else %}text-bg-primary{% endif %}">
+                        {{ task.get_status_display }}
+                    </span>
+
+                    {# Кнопки дії #}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'tasks:task-detail' task.pk %}" class="btn btn-sm btn-outline-primary">Деталі</a>
+
+                        {% if task.status != 'done' %}
+                        <form action="{% url 'tasks:task-complete' task.pk %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success">
+                                ✓ Виконано
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">Задач не знайдено.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

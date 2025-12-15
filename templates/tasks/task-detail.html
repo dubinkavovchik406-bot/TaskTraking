@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Деталі: {{ task.title }}
+{% endblock %}
+
+{% block content %}
+{% load custom_tags %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10"> <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">{{ task.title }}</h1>
+            <span class="badge rounded-pill
+                {% if task.priority == 'high' %}text-bg-danger{% elif task.priority == 'medium' %}text-bg-warning{% else %}text-bg-secondary{% endif %}">
+                {{ task.get_priority_display }}
+            </span>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary">
+                Основна інформація
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-3">Статус:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge
+                            {% if task.status == 'done' %}text-bg-success{% elif task.status == 'in_progress' %}text-bg-info{% else %}text-bg-primary{% endif %}">
+                            {{ task.get_status_display }}
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3">Дедлайн:</dt>
+                    <dd class="col-sm-9">{% if task.due_date %}{{ task.due_date|date:"d M Y" }}{% else %}Не встановлено{% endif %}</dd>
+
+                    <dt class="col-sm-3">Створено:</dt>
+                    <dd class="col-sm-9">{{ task.creator.username }}</dd>
+
+                    <dt class="col-sm-3 mt-3">Опис:</dt>
+                    <dd class="col-sm-9 mt-3">{{ task.description|default:"Опис відсутній." }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mb-5">
+            <a href="{% url 'tasks:task-update' task.id %}" class="btn btn-primary">Редагувати</a>
+            <a href="{% url 'tasks:task-delete' task.id %}" class="btn btn-outline-danger">Видалити</a>
+            <a href="{% url 'tasks:tasks-list' %}" class="btn btn-outline-secondary">Повернутися до списку</a>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary">
+                Коментарі
+            </div>
+            <div class="card-body">
+
+                {% for comment in task.comments.all %}
+                <div class="card mb-3 shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <p class="card-text">{{ comment.content }}</p>
+
+                        {% if comment.media %}
+                        <div class="comment-media mb-3">
+                            {% if comment.media.url|endswith:".jpg" or comment.media.url|endswith:".png" or comment.media.url|endswith:".jpeg" %}
+                                <img src="{{ comment.media.url }}" alt="Зображення коментаря" class="img-fluid rounded" style="max-width: 400px;">
+                            {% elif comment.media.url|endswith:".mp4" or comment.media.url|endswith:".mkv"%}
+                                <video width="100%" height="auto" controls class="rounded">
+                                    <source src="{{ comment.media.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% else %}
+                                <a href="{{ comment.media.url }}" class="btn btn-sm btn-outline-secondary">Завантажити файл</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                            <p class="mb-0 text-muted small">Автор: {{ comment.author.username }}</p>
+
+                            <div class="d-flex gap-2">
+                                <form action="{% url 'tasks:comment-like-toggle' comment.id %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm {% if request.user in comment.likes.all %}btn-success{% else %}btn-outline-success{% endif %}">
+                                        Лайк {{ comment.likes.count }}
+                                    </button>
+                                </form>
+                                <a href="{% url 'tasks:comment-update' comment.id %}" class="btn btn-sm btn-outline-primary">Оновити</a>
+                                <a href="{% url 'tasks:comment-delete' comment.id %}" class="btn btn-sm btn-outline-danger">Видалити</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-info mb-0">Коментарі відсутні.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-5">
+            <div class="card-header bg-primary">
+                Додати коментар
+            </div>
+            <div class="card-body">
+                <form action="{% url 'tasks:task-detail' task.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        {{ comment_form.content.label_tag }}
+                        {{ comment_form.content | add_class:"form-control" }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ comment_form.media.label_tag }}
+                        {{ comment_form.media | add_class:"form-control" }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Відправити</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+body {
+    background-color: #f0f0f0;
+}
+
+.navbar, .footer, .card {
+    background-color: #FFFFFF !important;
+}
+
+.btn-primary,
+.text-primary,
+.text-bg-primary,
+.btn-outline-primary:hover {
+    background-color: #673AB7 !important;
+    border-color: #673AB7 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-outline-primary {
+    color: #673AB7 !important;
+    border-color: #673AB7 !important;
+}
+
+.btn-success,
+.text-bg-success {
+    background-color: #4CAF50 !important;
+    border-color: #4CAF50 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-danger,
+.text-bg-danger {
+    background-color: #D32F2F !important;
+    border-color: #D32F2F !important;
+    color: #FFFFFF !important;
+}
+
+.text-bg-info {
+    background-color: #2196F3 !important;
+    color: #FFFFFF !important;
+}
+
+.card-title a {
+    text-decoration: none;
+    transition: color 0.2s;
+    color: #333333;
+}
+
+.card-title a:hover {
+    color: #673AB7 !important;
+}
+
+.card.border-start.border-danger {
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.1) !important;
+}
+
+.card.border-start.border-success {
+    opacity: 0.9;
+}
+
+.card-header.bg-primary {
+    background-color: #FFFFFF !important;
+    color: #673AB7 !important;
+    border-bottom: 2px solid #673AB7 !important;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+
+.card-header-accent {
+    background-color: #673AB7 !important;
+    color: #FFFFFF !important;
+    border-bottom: none !important;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+h4.text-primary {
+}
