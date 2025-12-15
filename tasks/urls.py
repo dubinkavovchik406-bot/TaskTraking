@@ -11,6 +11,9 @@ urlpatterns = [
     path("comment/update/<int:pk>", views.CommentUpdateView.as_view(), name="comment-update"),
     path("comment/delete/<int:pk>", views.CommentDeleteView.as_view(), name="comment-delete"),
     path("comment/like/<int:pk>", views.CommentLikeToggle.as_view(), name="comment-like-toggle"),
+    path("login/", views.CustomLoginView.as_view(), name="login"),
+    path("logout/", views.CustomLogoutView.as_view(), name="logout"),
+    path("register/", views.RegisterView.as_view(), name="register"),
 
 ]
 
