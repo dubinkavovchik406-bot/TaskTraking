@@ -150,3 +150,15 @@ class CommentDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("tasks:task-detail", kwargs={"pk": self.object.task.pk})
+
+# Сторінка для створення лайку
+class CommentLikeToggle(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        comment = get_object_or_404(models.Comment, pk=self.kwargs.get('pk'))
+        like_qs = models.Like.objects.filter(comment=comment, user=request.user)
+        if like_qs.exists():
+            like_qs.delete()
+        else:
+            models.Like.objects.create(comment=comment, user=request.user)
+        return HttpResponseRedirect(comment.get_absolute_url())
+
