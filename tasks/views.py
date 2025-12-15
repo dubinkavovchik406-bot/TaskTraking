@@ -133,3 +133,20 @@ class TaskDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
     success_url = reverse_lazy("tasks:tasks-list")
     template_name = "tasks/task-delete-confirmation.html"
 
+
+# Сторінка для оновлення інформації о коментарі
+class CommentUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+    model = models.Comment
+    fields = ['content']
+    template_name = "comments/comments-update-form.html"
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:task-detail", kwargs={"pk": self.object.task.pk})
+
+# Сторінка для видалення користувача
+class CommentDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
+    model = models.Comment
+    template_name = "comments/delete-comment.html"
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:task-detail", kwargs={"pk": self.object.task.pk})
