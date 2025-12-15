@@ -10,10 +10,10 @@ My goal of this project is **Django** web site, about **Task Traking Organizatio
 * Comment your friend's tasks
 * Use diffrent filter for tasks
 ### Some images from project site-page
-![Project Home Page](images/homepage.png)
-![Project Home Page](images/rooms-list.png)
-![Project Home Page](images/room-details.png)
-![Project Home Page](images/order-form-details.png)
+![Project Home Page](static/images/task-list.png)
+![Project Home Page](static/images/task-detail.png)
+![Project Home Page](static/images/comment.png)
+![Project Home Page](static/images/comment-update.png)
 
 ## How to install the project:
 EN:
