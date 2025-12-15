@@ -1,3 +1,72 @@
-from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, DetailView, View, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
-# Create your views here.
+from tasks import models
+from tasks.mixins import UserIsOwnerMixin
+from tasks.forms import TaskForm, TaskFilterForm, CommentForm
+
+from django.db.models import F
+from datetime import timedelta
+from django.utils import timezone
+
+# Сторінка з усіма тасками
+class TaskListView(ListView):
+    model = models.Task
+    context_object_name = "tasks"
+    template_name = "tasks/task-list.html"
+
+    # Отримання queryset з запиту для застосування фільтра
+    def get_queryset(self):
+        # Початковий QuerySet
+        queryset = super().get_queryset().order_by(
+            F('due_date').asc(nulls_last=True),'-priority'
+        )
+
+        # Обробка Фільтрації
+        form = TaskFilterForm(self.request.GET)
+
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+
+            # Фільтри за Статусом
+            status_filter = cleaned_data.get('status')
+            if status_filter:
+                queryset = queryset.filter(status=status_filter)
+
+            # Фільтри за Пріоритетом
+            priority_filter = cleaned_data.get('priority')
+            if priority_filter:
+                queryset = queryset.filter(priority=priority_filter)
+
+            # Фільтрація за Датою
+            due_date_period = cleaned_data.get('due_date_period')
+
+            if due_date_period:
+                today = timezone.localdate()
+
+                if due_date_period == 'today':
+                    # Фільтр - Час сьогодні
+                    queryset = queryset.filter(due_date=today)
+                elif due_date_period == 'this_week':
+                    # Фільтр - Час цього тижня
+                    days_until_sunday = 6 - today.weekday()
+                    end_of_week = today + timedelta(days=days_until_sunday)
+                    queryset = queryset.filter(due_date__lte=end_of_week, due_date__gte=today)
+                elif due_date_period == 'overdue':
+                    # Фільтр - прострочены задачі і статус не done
+                    queryset = queryset.filter(due_date__lt=today, status__in=['todo', 'in_progress'])
+                    return queryset
+
+        return queryset
+
+    # Збереження параметрів фільтру у контекст для використання у шаблоні
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = TaskFilterForm(self.request.GET)
+        return context
