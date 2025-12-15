@@ -9,7 +9,7 @@ My goal of this project is **Django** web site, about **Task Traking Organizatio
 * Add a lot of details to your task
 * Comment your friend's tasks
 * Use diffrent filter for tasks
-### Some images from project site-page
+### Some images from project site-pages
 ![Project Home Page](static/images/task-list.png)
 ![Project Home Page](static/images/task-detail.png)
 ![Project Home Page](static/images/comment.png)
